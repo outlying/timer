@@ -3,6 +3,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin.base}"
+    implementation "org.threeten:threetenbp:${versions.threetenbp.base}:no-tzdb"
 }
 
 sourceCompatibility = "8"
