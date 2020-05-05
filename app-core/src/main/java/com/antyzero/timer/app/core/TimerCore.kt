@@ -5,6 +5,6 @@ class TimerCore(
 ) {
 
     fun startTimer(seconds: Int) {
-
+        print(seconds)
     }
 }
