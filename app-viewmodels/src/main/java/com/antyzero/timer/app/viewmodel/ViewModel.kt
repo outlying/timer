@@ -1,4 +1,3 @@
 package com.antyzero.timer.app.viewmodel
 
-class ViewModel {
-}
+class ViewModel
