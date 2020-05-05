@@ -16,6 +16,8 @@ dependencies {
     implementation "androidx.navigation:navigation-ui:${versions.androidx.navigation}"
     implementation "androidx.navigation:navigation-ui-ktx:${versions.androidx.navigation}"
 
+    implementation "com.jakewharton.threetenabp:threetenabp:${versions.threetenbp.android}"
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

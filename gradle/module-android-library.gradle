@@ -4,3 +4,9 @@
 
 apply plugin: 'com.android.library'
 apply from: rootProject.file("./gradle/module-android-shared.gradle")
+
+dependencies {
+    compileOnly "org.threeten:threetenbp:${versions.threetenbp.base}:no-tzdb"
+
+    testImplementation "org.threeten:threetenbp:${versions.threetenbp.base}"
+}
