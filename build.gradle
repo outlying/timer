@@ -41,7 +41,8 @@ buildscript {
                     "dependencies": "0.28.0"
             ],
             "threetenbp": [
-                    "base": "1.4.4"
+                    "base"   : "1.4.4",
+                    "android": "1.2.4"
             ]
     ]
 
