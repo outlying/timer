@@ -1,4 +1,4 @@
-rootProject.name='Paczka'
+rootProject.name='Timer'
 include ':app'
 include ':app-core'
 include ':app-usecases'
