@@ -44,7 +44,8 @@ buildscript {
             "threetenbp": [
                     "base"   : "1.4.4",
                     "android": "1.2.4"
-            ]
+            ],
+            "truth": "1.0.1"
     ]
 
     repositories {

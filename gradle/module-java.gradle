@@ -13,6 +13,8 @@ dependencies {
     testImplementation "org.threeten:threetenbp:${versions.threetenbp.base}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit5}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit5}"
+
+    testImplementation "com.google.truth:truth:${versions.truth}"
 }
 
 sourceCompatibility = "8"
