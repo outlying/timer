@@ -138,6 +138,6 @@ class TestTimer {
 
     suspend operator fun TestTimeProvider.plusAssign(i: Int) {
         seconds += i
-        delay(20)
+        delay(50)
     }
 }
