@@ -5,6 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.TickerMode
 import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
@@ -16,20 +19,31 @@ class Timer(
     private val seconds: Long
 ) {
 
+    val state: ReceiveChannel<State>
+        get() = stateBroadcast.openSubscription()
+
     private val scope = CoroutineScope(Job() + Dispatchers.Unconfined)
 
-    private val tickerFlow = ticker(
+    private val tickerChannel = ticker(
         delayMillis = 10,
         initialDelayMillis = 0L,
         mode = TickerMode.FIXED_PERIOD,
         context = Dispatchers.Unconfined
     )
 
-    var state: State = State.Unstarted
-
     private var tickerJob = scope.launch { }
     private var expireTime: LocalDateTime = LocalDateTime.MAX
     private var remainingTime = Long.MAX_VALUE
+
+    private var _state: State = State.Unstarted
+        set(value) {
+            field = value
+            if (!stateBroadcast.isClosedForSend) {
+                stateBroadcast.offer(value)
+            }
+        }
+
+    private val stateBroadcast = BroadcastChannel<State>(Channel.BUFFERED)
 
     fun start() {
         expireTime = timeProvider.now().plusSeconds(seconds)
@@ -41,7 +55,7 @@ class Timer(
      */
     fun pause() {
         stopTicker()
-        state = State.Pause(remainingTime)
+        _state = State.Pause(remainingTime)
     }
 
     /**
@@ -68,17 +82,17 @@ class Timer(
     private fun startTicker() {
         stopTicker()
         tickerJob = scope.launch {
-            for (event in tickerFlow) {
+            for (event in tickerChannel) {
                 val now = timeProvider.now()
                 if (now.isAfter(expireTime)) {
-                    state = State.Done
+                    _state = State.Done
                     cancel()
                 } else {
                     remainingTime =
                         expireTime.toInstant(ZoneOffset.UTC).toEpochMilli() -
                                 now.toInstant(ZoneOffset.UTC).toEpochMilli()
 
-                    state = State.Running(remainingTime)
+                    _state = State.Running(remainingTime)
                 }
             }
         }

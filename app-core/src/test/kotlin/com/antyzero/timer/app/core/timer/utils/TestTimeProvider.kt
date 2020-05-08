@@ -1,4 +1,4 @@
-package com.antyzero.timer.app.core.timer
+package com.antyzero.timer.app.core.timer.utils
 
 import com.antyzero.timer.app.core.TimeProvider
 import org.threeten.bp.LocalDateTime
