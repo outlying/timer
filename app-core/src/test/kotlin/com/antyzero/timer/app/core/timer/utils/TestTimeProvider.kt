@@ -15,8 +15,4 @@ class TestTimeProvider : TimeProvider {
     private var localDateTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
 
     override fun now(): LocalDateTime = localDateTime
-
-    operator fun plusAssign(i: Int) {
-        seconds += i
-    }
 }

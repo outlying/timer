@@ -5,15 +5,9 @@ import com.antyzero.timer.app.core.timer.utils.TestTimeProvider
 import com.antyzero.timer.app.core.timer.utils.createStateRecorder
 import com.antyzero.timer.app.core.timer.utils.runBlockingUnit
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import java.util.concurrent.CancellationException
 
 class TestTimer {
 
@@ -25,7 +19,6 @@ class TestTimer {
 
         timer.start()
         timeProvider += 3
-        delay(20)
 
         assertThat(stateRecorder.list).run {
             hasSize(2)
@@ -41,7 +34,6 @@ class TestTimer {
 
         timer.start()
         timeProvider += 3
-        delay(20)
 
         assertThat(stateRecorder.list).run {
             hasSize(2)
@@ -64,7 +56,6 @@ class TestTimer {
 
         timer.start()
         timeProvider += 1
-        delay(20)
         timer.pause()
 
         assertThat(stateRecorder.list).run {
@@ -85,13 +76,10 @@ class TestTimer {
 
         timer.start()
         timeProvider += 1
-        delay(20)
         timer.pause()
         timeProvider += 1
-        delay(20)
         timer.resume()
         timeProvider += 1
-        delay(20)
 
         assertThat(stateRecorder.list).run {
             hasSize(5)
@@ -113,10 +101,8 @@ class TestTimer {
 
         timer.start()
         timeProvider += 1
-        delay(20)
         timer.pause()
         timeProvider += 1
-        delay(20)
         timer.start()
 
         assertThat(stateRecorder.list).run {
@@ -138,7 +124,6 @@ class TestTimer {
 
         timer.start()
         timeProvider += 1
-        delay(20)
         timer.start()
 
         assertThat(stateRecorder.list).run {
@@ -151,35 +136,8 @@ class TestTimer {
         }
     }
 
-    @Test
-    internal fun name(): Unit = runBlockingUnit {
-
-        val _broadcastChannel = BroadcastChannel<Int>(Channel.BUFFERED)
-        val sharedFlow = _broadcastChannel.asFlow()
-
-        launch(Dispatchers.IO) {
-            for (i in 0..5) {
-                if (!_broadcastChannel.isClosedForSend) {
-                    _broadcastChannel.offer(i)
-                }
-                delay(1000L)
-            }
-        }
-
-        launch {
-            delay(3000)
-            _broadcastChannel.cancel()
-        }
-
-        launch {
-            val openSubscription = _broadcastChannel.openSubscription()
-            launch {
-                for (item in openSubscription) {
-                    println("A: $item")
-                }
-            }
-            delay(5000)
-            openSubscription.cancel(CancellationException("I don;t know"))
-        }
+    suspend operator fun TestTimeProvider.plusAssign(i: Int) {
+        seconds += i
+        delay(20)
     }
 }
