@@ -181,6 +181,5 @@ class TestTimer {
             delay(5000)
             openSubscription.cancel(CancellationException("I don;t know"))
         }
-
     }
 }
