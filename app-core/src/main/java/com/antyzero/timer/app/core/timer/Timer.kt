@@ -37,10 +37,11 @@ class Timer(
 
     private var _state: State = State.Unstarted
         set(value) {
-            field = value
-            if (!stateBroadcast.isClosedForSend) {
+            // Only unique state is handled
+            if (!stateBroadcast.isClosedForSend && field != value) {
                 stateBroadcast.offer(value)
             }
+            field = value
         }
 
     private val stateBroadcast = BroadcastChannel<State>(Channel.BUFFERED)
