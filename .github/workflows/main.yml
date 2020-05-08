@@ -20,9 +20,9 @@ jobs:
       - name: Save reports
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
-          with:
-            name: core-test-reports
-            path: app-core/build/reports/tests/test/
+        with:
+          name: core-test-reports
+          path: app-core/build/reports/tests/test/
       - name: Check usecases
         run: ./gradlew :app-usecases:check
       - name: Check view models
