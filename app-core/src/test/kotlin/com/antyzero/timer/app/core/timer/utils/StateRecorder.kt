@@ -3,7 +3,7 @@ package com.antyzero.timer.app.core.timer.utils
 import com.antyzero.timer.app.core.timer.Timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class StateRecorder(timer: Timer) {
@@ -16,7 +16,7 @@ class StateRecorder(timer: Timer) {
 
     init {
         scope.launch(Dispatchers.IO) {
-            timer.state.consumeEach {
+            timer.state.collect {
                 _list.add(it)
             }
         }

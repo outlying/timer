@@ -1,18 +1,20 @@
 package com.antyzero.timer.app.core.timer.utils
 
 import com.antyzero.timer.app.core.TimeProvider
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneOffset
 
 class TestTimeProvider : TimeProvider {
 
-    var seconds: Long = 0
-        set(value) {
-            localDateTime = LocalDateTime.ofEpochSecond(value, 0, ZoneOffset.UTC)
-            field = value
-        }
+    override val currentTime: StateFlow<LocalDateTime>
+        get() = mutableCurrentTime
 
-    private var localDateTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
+    private val mutableCurrentTime = MutableStateFlow<LocalDateTime>(
+        LocalDateTime.of(0, 1, 1, 0, 0)
+    )
 
-    override fun now(): LocalDateTime = localDateTime
+    operator fun plusAssign(seconds: Int) {
+        mutableCurrentTime.value = mutableCurrentTime.value.plusSeconds(seconds.toLong())
+    }
 }

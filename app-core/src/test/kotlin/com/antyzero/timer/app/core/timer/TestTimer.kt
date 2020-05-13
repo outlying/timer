@@ -5,7 +5,6 @@ import com.antyzero.timer.app.core.timer.utils.TestTimeProvider
 import com.antyzero.timer.app.core.timer.utils.createStateRecorder
 import com.antyzero.timer.app.core.timer.utils.runBlockingUnit
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
@@ -21,8 +20,12 @@ class TestTimer {
         timeProvider += 3
 
         assertThat(stateRecorder.list).run {
-            hasSize(2)
-            containsExactly(State.Running(4000), State.Running(1000)).inOrder()
+            hasSize(3)
+            containsExactly(
+                State.Idle,
+                State.Running(4000),
+                State.Running(1000)
+            ).inOrder()
         }
     }
 
@@ -134,10 +137,5 @@ class TestTimer {
                 State.Running(3000)
             )
         }
-    }
-
-    suspend operator fun TestTimeProvider.plusAssign(i: Int) {
-        seconds += i
-        delay(50)
     }
 }
