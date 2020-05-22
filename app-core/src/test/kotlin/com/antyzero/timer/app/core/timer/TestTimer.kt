@@ -1,6 +1,5 @@
 package com.antyzero.timer.app.core.timer
 
-import com.antyzero.timer.app.core.timer.StandardTimer.State
 import com.antyzero.timer.app.core.timer.utils.TestTimeProvider
 import com.antyzero.timer.app.core.timer.utils.createStateRecorder
 import com.antyzero.timer.app.core.timer.utils.runBlockingUnit
