@@ -15,7 +15,7 @@ class StateRecorder(timer: Timer) {
         get() = _list
 
     init {
-        scope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.Unconfined) {
             timer.state.collect {
                 _list.add(it)
             }

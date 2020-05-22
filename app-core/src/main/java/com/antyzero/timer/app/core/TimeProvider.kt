@@ -7,6 +7,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDateTime
 
+/**
+ * Provides time with [currentTime] updates, it should be updated each time time changes.
+ *
+ * Useful for testing also to change precision of time
+ */
 interface TimeProvider {
 
     val currentTime: StateFlow<LocalDateTime>

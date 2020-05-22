@@ -19,14 +19,12 @@ class TestTimer {
         timer.start()
         timeProvider += 3
 
-        assertThat(stateRecorder.list).run {
-            hasSize(3)
-            containsExactly(
+        assertThat(stateRecorder.list)
+            .containsExactly(
                 State.Idle,
                 State.Running(4000),
                 State.Running(1000)
             ).inOrder()
-        }
     }
 
     @Test
@@ -39,8 +37,11 @@ class TestTimer {
         timeProvider += 3
 
         assertThat(stateRecorder.list).run {
-            hasSize(2)
-            containsExactly(State.Running(2000), State.Done).inOrder()
+            containsExactly(
+                State.Idle,
+                State.Running(2000),
+                State.Done
+            ).inOrder()
         }
     }
 
@@ -48,7 +49,7 @@ class TestTimer {
     internal fun unstarted() = runBlockingUnit {
         val timer = Timer(TestTimeProvider(), 2)
 
-        // assertThat(timer.state.poll()).isInstanceOf(State.Unstarted::class.java)
+        assertThat(timer.state.value).isInstanceOf(State.Idle::class.java)
     }
 
     @Test
@@ -62,8 +63,8 @@ class TestTimer {
         timer.pause()
 
         assertThat(stateRecorder.list).run {
-            hasSize(3)
             containsExactly(
+                State.Idle,
                 State.Running(2000L),
                 State.Running(1000L),
                 State.Pause(1000)
@@ -85,8 +86,8 @@ class TestTimer {
         timeProvider += 1
 
         assertThat(stateRecorder.list).run {
-            hasSize(5)
             containsExactly(
+                State.Idle,
                 State.Running(3000),
                 State.Running(2000),
                 State.Pause(2000),
@@ -109,8 +110,8 @@ class TestTimer {
         timer.start()
 
         assertThat(stateRecorder.list).run {
-            hasSize(4)
             containsExactly(
+                State.Idle,
                 State.Running(3000),
                 State.Running(2000),
                 State.Pause(2000),
@@ -130,8 +131,8 @@ class TestTimer {
         timer.start()
 
         assertThat(stateRecorder.list).run {
-            hasSize(3)
             containsExactly(
+                State.Idle,
                 State.Running(3000),
                 State.Running(2000),
                 State.Running(3000)

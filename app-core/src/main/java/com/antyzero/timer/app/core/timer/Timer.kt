@@ -32,7 +32,6 @@ class Timer(
             // Only unique state is handled
             if (field != value) {
                 scope.launch {
-                    delay(1)
                     mutableStateFlow.value = value
                 }
             }
