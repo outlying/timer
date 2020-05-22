@@ -17,5 +17,4 @@ interface Timer {
      * Resume timer from pause
      */
     fun resume()
-
 }
