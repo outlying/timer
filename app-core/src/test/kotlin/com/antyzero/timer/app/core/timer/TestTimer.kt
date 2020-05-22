@@ -1,6 +1,6 @@
 package com.antyzero.timer.app.core.timer
 
-import com.antyzero.timer.app.core.timer.Timer.State
+import com.antyzero.timer.app.core.timer.StandardTimer.State
 import com.antyzero.timer.app.core.timer.utils.TestTimeProvider
 import com.antyzero.timer.app.core.timer.utils.createStateRecorder
 import com.antyzero.timer.app.core.timer.utils.runBlockingUnit
@@ -13,7 +13,7 @@ class TestTimer {
     @Test
     internal fun running() = runBlockingUnit {
         val timeProvider = TestTimeProvider()
-        val timer = Timer(timeProvider, 4)
+        val timer = StandardTimer(timeProvider, 4)
         val stateRecorder = timer.createStateRecorder()
 
         timer.start()
@@ -30,7 +30,7 @@ class TestTimer {
     @Test
     internal fun done() = runBlocking {
         val timeProvider = TestTimeProvider()
-        val timer = Timer(timeProvider, 2)
+        val timer = StandardTimer(timeProvider, 2)
         val stateRecorder = timer.createStateRecorder()
 
         timer.start()
@@ -47,7 +47,7 @@ class TestTimer {
 
     @Test
     internal fun unstarted() = runBlockingUnit {
-        val timer = Timer(TestTimeProvider(), 2)
+        val timer = StandardTimer(TestTimeProvider(), 2)
 
         assertThat(timer.state.value).isInstanceOf(State.Idle::class.java)
     }
@@ -55,7 +55,7 @@ class TestTimer {
     @Test
     internal fun pause() = runBlockingUnit {
         val timeProvider = TestTimeProvider()
-        val timer = Timer(timeProvider, 2)
+        val timer = StandardTimer(timeProvider, 2)
         val stateRecorder = timer.createStateRecorder()
 
         timer.start()
@@ -75,7 +75,7 @@ class TestTimer {
     @Test
     internal fun runningAfterPause() = runBlockingUnit {
         val timeProvider = TestTimeProvider()
-        val timer = Timer(timeProvider, 3)
+        val timer = StandardTimer(timeProvider, 3)
         val stateRecorder = timer.createStateRecorder()
 
         timer.start()
@@ -100,7 +100,7 @@ class TestTimer {
     @Test
     internal fun runningWithStartAfterPause() = runBlockingUnit {
         val timeProvider = TestTimeProvider()
-        val timer = Timer(timeProvider, 3)
+        val timer = StandardTimer(timeProvider, 3)
         val stateRecorder = timer.createStateRecorder()
 
         timer.start()
@@ -123,7 +123,7 @@ class TestTimer {
     @Test
     internal fun restart() = runBlockingUnit {
         val timeProvider = TestTimeProvider()
-        val timer = Timer(timeProvider, 3)
+        val timer = StandardTimer(timeProvider, 3)
         val stateRecorder = timer.createStateRecorder()
 
         timer.start()
