@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface Timer {
 
-    val state: StateFlow<StandardTimer.State>
+    val state: StateFlow<State>
 
     fun start()
 

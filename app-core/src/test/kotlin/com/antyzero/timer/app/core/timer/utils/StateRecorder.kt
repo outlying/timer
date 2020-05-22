@@ -1,6 +1,5 @@
 package com.antyzero.timer.app.core.timer.utils
 
-import com.antyzero.timer.app.core.timer.StandardTimer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
