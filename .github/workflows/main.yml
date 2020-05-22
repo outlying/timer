@@ -15,5 +15,17 @@ jobs:
         uses: actions/checkout@v2
       - name: Assemble
         run: ./gradlew assemble
-      - name: Build
-        run: ./gradlew check
+      - name: Check core
+        run: ./gradlew :app-core:check
+      - name: Save reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: core-test-reports
+          path: app-core/build/reports/tests/test/
+      - name: Check usecases
+        run: ./gradlew :app-usecases:check
+      - name: Check view models
+        run: ./gradlew :app-viewmodels:check
+      - name: Check app
+        run: ./gradlew :app:check

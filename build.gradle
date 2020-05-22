@@ -35,7 +35,7 @@ buildscript {
             "junit5"    : "5.1.0",
             "kotlin"    : [
                     "base"      : "1.3.72",
-                    "coroutines": "1.3.5"
+                    "coroutines": "1.3.7"
             ],
             "plugins"   : [
                     "android"     : "3.6.2",
@@ -76,26 +76,19 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-/**
- * Empty task assemble to trigger root jobs during normal builds
- */
-task assemble() {}
-
-/**
- * Update Travis file
- *
- * This will ensure that Travis file has up to date configuration that will match
- * project settings
- */
-import org.apache.tools.ant.filters.ReplaceTokens
-
-task updateTravisYml(type: Copy) {
-    from 'dev/travis/.travis.yml'
-    into '.'
-    filter(ReplaceTokens, tokens: [
-            ANDROID_SDK_COMPILE: general.android.sdk.compile.toString()
-    ])
+def isNonStable = { String version ->
+    def nonStableKeywords = ['ALPHA', 'BETA', 'M1', 'RC'].any { version.toUpperCase().contains(it) }
+    return nonStableKeywords
 }
 
-tasks.assemble.dependsOn("updateTravisYml")
-tasks.clean.dependsOn("updateTravisYml")
+dependencyUpdates {
+    resolutionStrategy {
+        componentSelection {
+            all {
+                if (isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)) {
+                    reject('Release candidate')
+                }
+            }
+        }
+    }
+}

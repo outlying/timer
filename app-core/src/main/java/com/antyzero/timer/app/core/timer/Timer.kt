@@ -5,8 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.TickerMode
-import kotlinx.coroutines.channels.ticker
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneOffset
@@ -16,23 +17,31 @@ class Timer(
     private val seconds: Long
 ) {
 
+    val state: StateFlow<State>
+        get() = mutableStateFlow
+
     private val scope = CoroutineScope(Job() + Dispatchers.Unconfined)
-
-    private val tickerFlow = ticker(
-        delayMillis = 10,
-        initialDelayMillis = 0L,
-        mode = TickerMode.FIXED_PERIOD,
-        context = Dispatchers.Unconfined
-    )
-
-    var state: State = State.Unstarted
 
     private var tickerJob = scope.launch { }
     private var expireTime: LocalDateTime = LocalDateTime.MAX
     private var remainingTime = Long.MAX_VALUE
 
+    private var _state: State = State.Idle
+        set(value) {
+            // Only unique state is handled
+            if (field != value) {
+                scope.launch {
+                    mutableStateFlow.value = value
+                }
+            }
+            field = value
+        }
+
+    // Do not modify directly, use [_state]
+    private val mutableStateFlow = MutableStateFlow<State>(State.Idle)
+
     fun start() {
-        expireTime = timeProvider.now().plusSeconds(seconds)
+        expireTime = timeProvider.currentTime.value.plusSeconds(seconds)
         startTicker()
     }
 
@@ -41,14 +50,14 @@ class Timer(
      */
     fun pause() {
         stopTicker()
-        state = State.Pause(remainingTime)
+        _state = State.Pause(remainingTime)
     }
 
     /**
      * Resume timer from pause
      */
     fun resume() {
-        expireTime = timeProvider.now().plusNanos(remainingTime * 1_000_000)
+        expireTime = timeProvider.currentTime.value.plusNanos(remainingTime * 1_000_000)
         startTicker()
     }
 
@@ -67,18 +76,18 @@ class Timer(
      */
     private fun startTicker() {
         stopTicker()
+
         tickerJob = scope.launch {
-            for (event in tickerFlow) {
-                val now = timeProvider.now()
+            timeProvider.currentTime.collect { now ->
                 if (now.isAfter(expireTime)) {
-                    state = State.Done
+                    _state = State.Done
                     cancel()
                 } else {
                     remainingTime =
                         expireTime.toInstant(ZoneOffset.UTC).toEpochMilli() -
                                 now.toInstant(ZoneOffset.UTC).toEpochMilli()
 
-                    state = State.Running(remainingTime)
+                    _state = State.Running(remainingTime)
                 }
             }
         }
@@ -86,7 +95,10 @@ class Timer(
 
     sealed class State {
 
-        object Unstarted : State()
+        object Idle : State() {
+
+            override fun toString() = "Idle"
+        }
 
         data class Running(val remainingTime: Long) : State()
 

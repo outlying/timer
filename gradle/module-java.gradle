@@ -1,13 +1,12 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
+apply from: rootProject.file("./gradle/dependencies-kotlin.gradle")
 
 test {
     useJUnitPlatform()
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin.base}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlin.coroutines}"
     compileOnly "org.threeten:threetenbp:${versions.threetenbp.base}:no-tzdb"
 
     testImplementation "org.threeten:threetenbp:${versions.threetenbp.base}"
